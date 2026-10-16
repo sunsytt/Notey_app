@@ -37,7 +37,8 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 TaskScreen(
                     uiState = uiState,
-                    onCreateTask = viewModel::createTask
+                    onCreateTask = viewModel::createTask,
+                    onChangeStatus = viewModel::updateTaskStatus
                 )
             }
         }
@@ -76,7 +77,8 @@ fun NoteyPreview() {
                 tasks = sampleTasks,
                 isLoading = false
             ),
-            onCreateTask = { _, _, _, _, _ -> }
+            onCreateTask = { _, _, _, _, _ -> },
+            onChangeStatus = { _, _ -> }
         )
     }
 }

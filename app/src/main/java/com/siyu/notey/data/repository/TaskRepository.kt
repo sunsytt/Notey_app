@@ -8,5 +8,6 @@ interface TaskRepository {
     fun observeTaskData(): Flow<TaskData>
     suspend fun saveTaskData(data: TaskData)
     suspend fun addTask(task: Task)
+    suspend fun updateTask(task:Task)
 
 }

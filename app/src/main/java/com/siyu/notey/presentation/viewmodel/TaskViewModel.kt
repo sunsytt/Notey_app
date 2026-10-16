@@ -15,6 +15,7 @@ import com.siyu.notey.data.model.Priority
 import com.siyu.notey.data.model.Task
 import com.siyu.notey.data.model.TaskStatus
 
+
 class TaskViewModel (
     private val repository: TaskRepository
 ): ViewModel() {
@@ -95,5 +96,27 @@ class TaskViewModel (
             }
         }
     }
+    fun updateTaskStatus(taskId: Int, newStatus: TaskStatus) {
+        val task = _uiState.value.tasks
+            .find { it.id == taskId }
+            ?: return
 
+        viewModelScope.launch {
+            try {
+                repository.updateTask(
+                    task.copy(status = newStatus)
+                )
+
+                _uiState.update {
+                    it.copy(errorMessage = null)
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "No se pudo actualizar el estado."
+                    )
+                }
+            }
+        }
+    }
 }

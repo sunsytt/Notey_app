@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.siyu.notey.data.model.Category
 import com.siyu.notey.data.model.Priority
+import com.siyu.notey.data.model.TaskStatus
 import com.siyu.notey.presentation.state.TaskUiState
 import com.siyu.notey.presentation.viewmodel.TaskViewModel
 
@@ -34,7 +35,8 @@ fun TaskScreen(
         Category,
         Priority,
         Int?
-    ) -> Unit
+    ) -> Unit,
+    onChangeStatus: (Int, TaskStatus) -> Unit
 )
  {
     var title by remember { mutableStateOf("") }
@@ -140,9 +142,37 @@ fun TaskScreen(
                                 }"
                             )
                         }
+                        Text("Cambiar estado")
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            TaskStatus.entries.forEach { option ->
+                                TextButton(
+                                    onClick = {
+                                        onChangeStatus(task.id, option)
+                                    }
+                                ) {
+                                    Text(
+                                        if (task.status == option) {
+                                            "✓ ${option.toSpanish()}"
+                                        } else {
+                                            option.toSpanish()
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
+private fun TaskStatus.toSpanish(): String {
+    return when (this) {
+        TaskStatus.PENDING -> "Pendiente"
+        TaskStatus.IN_PROGRESS -> "En progreso"
+        TaskStatus.COMPLETED -> "Completada"
     }
 }

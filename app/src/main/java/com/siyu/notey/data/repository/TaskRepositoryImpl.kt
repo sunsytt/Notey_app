@@ -39,4 +39,25 @@ class TaskRepositoryImpl(
             TaskSerializer.encode(updatedData)
         }
     }
+    override suspend fun updateTask(task: Task) {
+        dataStore.updateTaskData { raw ->
+            val currentData = if (raw == null) {
+                TaskData()
+            } else {
+                TaskSerializer.decode(raw)
+            }
+
+            val updatedTasks = currentData.tasks.map { currentTask ->
+                if (currentTask.id == task.id) {
+                    task
+                } else {
+                    currentTask
+                }
+            }
+
+            TaskSerializer.encode(
+                currentData.copy(tasks = updatedTasks)
+            )
+        }
+    }
 }
