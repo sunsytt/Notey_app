@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.siyu.notey.data.model.Category
+import com.siyu.notey.data.model.Priority
+import com.siyu.notey.data.model.Task
+import com.siyu.notey.data.model.TaskStatus
 
 class TaskViewModel (
     private val repository: TaskRepository
@@ -45,4 +49,51 @@ class TaskViewModel (
                 }
         }
     }
+
+    fun createTask(
+        title: String,
+        description: String,
+        category: Category,
+        priority: Priority,
+        estimatedMinutes: Int?
+    ) {
+        if (title.isBlank()) {
+            _uiState.update {
+                it.copy(errorMessage = "El título es obligatorio.")
+            }
+            return
+        }
+
+        if (estimatedMinutes != null && estimatedMinutes <= 0) {
+            _uiState.update {
+                it.copy(errorMessage = "El tiempo estimado debe ser mayor que cero.")
+            }
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val task = Task(
+                    id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
+                    title = title.trim(),
+                    description = description.trim(),
+                    category = category,
+                    priority = priority,
+                    status = TaskStatus.PENDING,
+                    createdAt = System.currentTimeMillis(),
+                    estimatedMinutes = estimatedMinutes
+                )
+
+                repository.addTask(task)
+                _uiState.update { it.copy(errorMessage = null) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "No se pudo guardar la tarea."
+                    )
+                }
+            }
+        }
+    }
+
 }

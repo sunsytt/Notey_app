@@ -30,4 +30,13 @@ class TaskDataStore (
             preferences[TASK_DATA_KEY] = json
         }
     }
+    suspend fun updateTaskData(
+        transform: (String?) -> String
+    ) {
+        context.taskDataStore.edit { preferences ->
+            val currentJson = preferences[TASK_DATA_KEY]
+            preferences[TASK_DATA_KEY] = transform(currentJson)
+        }
+    }
+
 }

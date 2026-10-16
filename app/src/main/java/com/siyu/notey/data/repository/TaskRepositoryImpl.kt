@@ -3,6 +3,7 @@ package com.siyu.notey.data.repository
 import com.siyu.notey.data.local.TaskData
 import com.siyu.notey.data.local.TaskDataStore
 import com.siyu.notey.data.local.TaskSerializer
+import com.siyu.notey.data.model.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -22,5 +23,20 @@ class TaskRepositoryImpl(
     override suspend fun saveTaskData(data: TaskData) {
         val json = TaskSerializer.encode(data)
         dataStore.saveTaskData(json)
+    }
+    override suspend fun addTask(task: Task) {
+        dataStore.updateTaskData { raw ->
+            val currentData = if (raw == null) {
+                TaskData()
+            } else {
+                TaskSerializer.decode(raw)
+            }
+
+            val updatedData = currentData.copy(
+                tasks = currentData.tasks + task
+            )
+
+            TaskSerializer.encode(updatedData)
+        }
     }
 }
