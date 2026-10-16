@@ -2,6 +2,7 @@ package com.siyu.notey.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.siyu.notey.data.model.ActivityRecord
 import com.siyu.notey.data.repository.TaskRepository
 import com.siyu.notey.presentation.state.TaskUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +15,8 @@ import com.siyu.notey.data.model.Category
 import com.siyu.notey.data.model.Priority
 import com.siyu.notey.data.model.Task
 import com.siyu.notey.data.model.TaskStatus
+import java.time.LocalDate
+import java.util.UUID
 
 
 class TaskViewModel (
@@ -115,6 +118,40 @@ class TaskViewModel (
                     it.copy(
                         errorMessage = "No se pudo actualizar el estado."
                     )
+                }
+            }
+        }
+    }
+    fun archiveTask(taskId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.archiveTask(taskId)
+                _uiState.update { it.copy(errorMessage = null) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = "No se pudo archivar la tarea.")
+                }
+            }
+        }
+    }
+    fun registerSession(taskId: Int, minutes: Int = 25) {
+        if (minutes <= 0) return
+
+        viewModelScope.launch {
+            try {
+                repository.addActivityRecord(
+                    ActivityRecord(
+                        id = UUID.randomUUID().toString(),
+                        taskId = taskId,
+                        date = LocalDate.now().toString(),
+                        durationMinutes = minutes
+                    )
+                )
+
+                _uiState.update { it.copy(errorMessage = null) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = "No se pudo registrar la sesión.")
                 }
             }
         }

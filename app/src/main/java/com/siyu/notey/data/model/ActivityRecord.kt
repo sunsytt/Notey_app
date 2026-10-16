@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ActivityRecord(
     val id: String,
-    val taskId: String,
+    val taskId: Int,
     val date: String,
     val durationMinutes: Int,
     val notes: String = "",

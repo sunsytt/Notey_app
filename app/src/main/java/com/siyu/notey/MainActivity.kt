@@ -38,7 +38,9 @@ class MainActivity : ComponentActivity() {
                 TaskScreen(
                     uiState = uiState,
                     onCreateTask = viewModel::createTask,
-                    onChangeStatus = viewModel::updateTaskStatus
+                    onChangeStatus = viewModel::updateTaskStatus,
+                    onArchiveTask = viewModel::archiveTask,
+                    onRegisterSession = viewModel::registerSession
                 )
             }
         }
@@ -78,7 +80,9 @@ fun NoteyPreview() {
                 isLoading = false
             ),
             onCreateTask = { _, _, _, _, _ -> },
-            onChangeStatus = { _, _ -> }
+            onChangeStatus = { _, _ -> },
+            onArchiveTask = {},
+            onRegisterSession = {}
         )
     }
 }
