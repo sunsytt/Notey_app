@@ -25,7 +25,8 @@ class TaskViewModel (
     private val _uiState = MutableStateFlow(TaskUiState())
     val uiState: StateFlow<TaskUiState> = _uiState.asStateFlow()
 
-    init{
+    init {
+        viewModelScope.launch { repository.seedIfEmpty() }
         observeTasks()
     }
 
@@ -134,26 +135,41 @@ class TaskViewModel (
             }
         }
     }
-    fun registerSession(taskId: Int, minutes: Int = 25) {
-        if (minutes <= 0) return
 
+    fun restoreTask(taskId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.restoreTask(taskId)
+                _uiState.update { it.copy(errorMessage = null) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "No se pudo restaurar la tarea.") }
+            }
+        }
+    }
+    fun registerSession(taskId: Int, date: String, minutes: Int, note: String?) {
         viewModelScope.launch {
             try {
                 repository.addActivityRecord(
                     ActivityRecord(
                         id = UUID.randomUUID().toString(),
                         taskId = taskId,
-                        date = LocalDate.now().toString(),
-                        durationMinutes = minutes
+                        date = date,
+                        durationMinutes = minutes,
+                        note = note?.trim()?.ifBlank { null }
                     )
                 )
-
                 _uiState.update { it.copy(errorMessage = null) }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(errorMessage = "No se pudo registrar la sesión.")
+                    it.copy(errorMessage = e.message ?: "No se pudo registrar la sesión.")
                 }
             }
         }
+    }
+    fun selectStatus(status: TaskStatus?) {
+        _uiState.update { it.copy(selectedStatus = status) }
+    }
+    fun selectCategory(category: Category?) {
+        _uiState.update { it.copy(selectedCategory = category) }
     }
 }

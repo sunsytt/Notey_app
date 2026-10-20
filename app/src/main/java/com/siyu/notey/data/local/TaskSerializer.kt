@@ -15,6 +15,8 @@ data class TaskData(
 object TaskSerializer {
     private val json = Json {
         prettyPrint = true
+        ignoreUnknownKeys = true   // no falla si agregas campos después
+        encodeDefaults = true      // guarda también isArchived = false, etc.
     }
     fun encode(data:TaskData): String {
         return json.encodeToString(data)

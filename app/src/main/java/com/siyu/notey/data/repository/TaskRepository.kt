@@ -7,10 +7,10 @@ import com.siyu.notey.data.model.ActivityRecord
 
 interface TaskRepository {
     fun observeTaskData(): Flow<TaskData>
-    suspend fun saveTaskData(data: TaskData)
+    suspend fun seedIfEmpty()
     suspend fun addTask(task: Task)
-    suspend fun updateTask(task:Task)
+    suspend fun updateTask(task: Task)
     suspend fun archiveTask(taskId: Int)
+    suspend fun restoreTask(taskId: Int)
     suspend fun addActivityRecord(record: ActivityRecord)
-
 }
