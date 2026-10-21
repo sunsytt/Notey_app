@@ -8,6 +8,6 @@ data class ActivityRecord(
     val taskId: Int,
     val date: String,
     val durationMinutes: Int,
-    val notes: String = "",
+    val note: String? = null,
     val isCompletion: Boolean = false
 )

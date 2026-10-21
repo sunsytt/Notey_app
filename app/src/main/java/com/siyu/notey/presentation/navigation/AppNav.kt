@@ -16,7 +16,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.siyu.notey.data.local.SeedData
+import com.siyu.notey.presentation.screens.TaskDetailScreen
+import com.siyu.notey.presentation.screens.TaskFormScreen
+import com.siyu.notey.presentation.screens.TaskListScreen
 import com.siyu.notey.presentation.viewmodel.TaskViewModel
+
 
 @Composable
 fun AppNav(vm: TaskViewModel) {
@@ -43,17 +48,57 @@ fun AppNav(vm: TaskViewModel) {
         NavHost(nav, Screen.Home.route,
             Modifier.padding(padding)) {
             composable(Screen.Home.route) { /* DashboardScreen(state, ...) */ }
-            composable(Screen.Tasks.route) { /* TaskListScreen(...) */ }
+            composable(Screen.Tasks.route) {
+                TaskListScreen(
+                    state = state,
+                    categories = SeedData.categories,
+                    onTaskClick = { id -> nav.navigate("detail/$id") },
+                    onNewTask = { nav.navigate("form") },
+                    onEditTask = { id -> nav.navigate("form?taskId=$id") },
+                    onArchiveTask = vm::archiveTask,
+                    onOpenArchived = { nav.navigate(Screen.Archived.route) },
+                    onSelectStatus = vm::selectStatus,
+                    onSelectCategory = vm::selectCategory
+                )
+            }
+            composable(
+                route = Screen.Detail.route,
+                arguments = listOf(navArgument("taskId") { type = NavType.IntType })
+            ) { entry ->
+                val id = entry.arguments?.getInt("taskId") ?: -1
+                TaskDetailScreen(
+                    task = state.tasks.find { it.id == id },
+                    records = state.activityRecords.filter { it.taskId == id },
+                    onBack = { nav.popBackStack() },
+                    onEdit = { nav.navigate("form?taskId=$it") },
+                    onChangeStatus = vm::updateTaskStatus,
+                    onArchive = vm::archiveTask,
+                    onRestore = vm::restoreTask,
+                    onRegisterSession = vm::registerSession
+                )
+            }
             composable(Screen.Stats.route) { /* StatisticsScreen(state) */ }
             composable(Screen.History.route) { /* HistoryScreen(state) */ }
-            composable(Screen.Detail.route,
+            composable(
+                route = "form?taskId={taskId}",
                 arguments = listOf(navArgument("taskId") {
-                    type = NavType.IntType
+                        type = NavType.IntType
+                        defaultValue = -1
                 })
             ) { entry ->
-                val id = entry.arguments!!.getInt("taskId")
-                val task = state.tasks.find { it.id == id }
-                /* TaskDetailScreen(task, state, ...) */
+                val id = entry.arguments?.getInt("taskId") ?: -1
+                val task = state.tasks.find { it.id == id }   // null si es una tarea nueva
+
+                TaskFormScreen(
+                    taskToEdit = task,
+                    categories = SeedData.categories,
+                    onSave = { title, desc, cat, prio, due, mins ->
+                        if (task == null) vm.createTask(title, desc, cat, prio, due, mins)
+                        else vm.updateTask(task.id, title, desc, cat, prio, due, mins)
+                        nav.popBackStack() },
+                    onCancel = { nav.popBackStack() }
+                )
+
             }
         }
     }

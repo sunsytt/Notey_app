@@ -24,8 +24,14 @@ class TaskViewModel (
     val uiState: StateFlow<TaskUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch { repository.seedIfEmpty() }
-        observeTasks()
+        viewModelScope.launch {
+            try {
+                repository.seedIfEmpty()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "No se pudieron preparar los datos.") }
+            }
+            observeTasks()
+        }
     }
 
     private fun observeTasks(){
@@ -58,71 +64,88 @@ class TaskViewModel (
         description: String,
         category: Category,
         priority: Priority,
+        dueDate: String?,
         estimatedMinutes: Int?
     ) {
         if (title.isBlank()) {
-            _uiState.update {
-                it.copy(errorMessage = "El título es obligatorio.")
-            }
+            _uiState.update { it.copy(errorMessage = "El título es obligatorio.") }
             return
         }
-
         if (estimatedMinutes != null && estimatedMinutes <= 0) {
-            _uiState.update {
-                it.copy(errorMessage = "El tiempo estimado debe ser mayor que cero.")
-            }
+            _uiState.update { it.copy(errorMessage = "El tiempo estimado debe ser mayor que cero.") }
             return
         }
 
         viewModelScope.launch {
             try {
                 val task = Task(
-                    id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
+                    id = (_uiState.value.tasks.maxOfOrNull { it.id } ?: 0) + 1,
                     title = title.trim(),
                     description = description.trim(),
                     category = category,
                     priority = priority,
                     status = TaskStatus.PENDING,
                     createdAt = System.currentTimeMillis(),
+                    dueDate = dueDate,
                     estimatedMinutes = estimatedMinutes
                 )
-
                 repository.addTask(task)
                 _uiState.update { it.copy(errorMessage = null) }
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        errorMessage = "No se pudo guardar la tarea."
-                    )
-                }
+                _uiState.update { it.copy(errorMessage = "No se pudo guardar la tarea.") }
             }
         }
     }
 
     fun updateTaskStatus(taskId: Int, newStatus: TaskStatus) {
-        val task = _uiState.value.tasks
-            .find { it.id == taskId }
-            ?: return
+        val task = _uiState.value.tasks.find { it.id == taskId } ?: return
+
+        viewModelScope.launch {
+            try {
+                repository.updateTask(task.copy(status = newStatus))
+                _uiState.update { it.copy(errorMessage = null) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "No se pudo actualizar el estado.") }
+            }
+        }
+    }
+    fun updateTask(
+        taskId: Int,
+        title: String,
+        description: String,
+        category: Category,
+        priority: Priority,
+        dueDate: String?,
+        estimatedMinutes: Int?
+    ) {
+        if (title.isBlank()) {
+            _uiState.update { it.copy(errorMessage = "El título es obligatorio.") }
+            return
+        }
+        if (estimatedMinutes != null && estimatedMinutes <= 0) {
+            _uiState.update { it.copy(errorMessage = "El tiempo estimado debe ser mayor que cero.") }
+            return
+        }
+        val task = _uiState.value.tasks.find { it.id == taskId } ?: return
 
         viewModelScope.launch {
             try {
                 repository.updateTask(
-                    task.copy(status = newStatus)
-                )
-
-                _uiState.update {
-                    it.copy(errorMessage = null)
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        errorMessage = "No se pudo actualizar el estado."
+                    task.copy(
+                        title = title.trim(),
+                        description = description.trim(),
+                        category = category,
+                        priority = priority,
+                        dueDate = dueDate,
+                        estimatedMinutes = estimatedMinutes
                     )
-                }
+                )
+                _uiState.update { it.copy(errorMessage = null) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "No se pudo actualizar la tarea.") }
             }
         }
     }
-
     fun archiveTask(taskId: Int) {
         viewModelScope.launch {
             try {
@@ -156,7 +179,7 @@ class TaskViewModel (
                         taskId = taskId,
                         date = date,
                         durationMinutes = minutes,
-                        notes = note?.trim()?.ifBlank { "" } ?: ""
+                        note = note?.trim()?.ifBlank { "" } ?: ""
                     )
                 )
                 _uiState.update { it.copy(errorMessage = null) }
@@ -167,7 +190,7 @@ class TaskViewModel (
             }
         }
     }
-
+    //usado en taskListScreen
     fun selectStatus(status: TaskStatus?) {
         _uiState.update { it.copy(selectedStatus = status) }
     }
