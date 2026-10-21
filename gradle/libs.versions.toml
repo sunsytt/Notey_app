@@ -16,6 +16,7 @@ runtime = "1.12.1"
 material3 = "1.4.0"
 foundation = "1.12.1"
 uiGraphics = "1.12.1"
+uiText = "1.12.1"
 
 
 [libraries]
@@ -46,6 +47,7 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 
 

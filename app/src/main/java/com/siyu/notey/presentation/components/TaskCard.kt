@@ -1,6 +1,7 @@
 package com.siyu.notey.presentation.components
 
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,26 +43,31 @@ fun TaskCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     menuActions: List<MenuAction> = emptyList()
-
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 12.dp
+        )
     ) {
-        Row( Modifier
-            .padding(16.dp),
-            verticalAlignment = Alignment.Top
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(
-                    task.title,
-                    style = MaterialTheme.typography.titleMedium)
+        Box {
+            Column(
+                Modifier.padding(
+                    start = 16.dp, top = 16.dp, bottom = 16.dp,
+                    end = if (menuActions.isNotEmpty()) 48.dp else 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(task.title, style = MaterialTheme.typography.titleMedium)
                 Text(task.category.name, style = MaterialTheme.typography.bodySmall)
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     PriorityChip(task.priority)
                     TaskStatusChip(task.status)
                 }
@@ -68,14 +75,13 @@ fun TaskCard(
                     Text("Vence: $it", style = MaterialTheme.typography.bodySmall)
                 }
                 val time = task.estimatedMinutes
-                    ?.let {"$loggedMinutes/$it min"}
-                    ?: "$loggedMinutes min sin registrar"
-                    Text(time,
-                        style = MaterialTheme.typography.bodySmall)
-                }
+                    ?.let { "$loggedMinutes / $it min" }
+                    ?: "$loggedMinutes min · Sin estimación"
+                Text(time, style = MaterialTheme.typography.bodySmall)
             }
+
             if (menuActions.isNotEmpty()) {
-                Box {
+                Box(Modifier.align(Alignment.TopEnd)) {
                     IconButton(onClick = { expanded = true }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
                     }
@@ -91,3 +97,4 @@ fun TaskCard(
             }
         }
     }
+}

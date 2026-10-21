@@ -198,4 +198,8 @@ class TaskViewModel (
     fun selectCategory(category: Category?) {
         _uiState.update { it.copy(selectedCategory = category) }
     }
+
+    fun clearError() {
+        _uiState.update { it.copy(errorMessage = null) }
+    }
 }

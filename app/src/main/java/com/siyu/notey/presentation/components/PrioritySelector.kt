@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.siyu.notey.data.model.Priority
+import com.siyu.notey.ui.theme.Coral
 import com.siyu.notey.ui.theme.InkDark
-import com.siyu.notey.ui.theme.SkyBlue
-import com.siyu.notey.ui.theme.SoftPeach
-import com.siyu.notey.ui.theme.TomatoJam
+import com.siyu.notey.ui.theme.Sky
+import com.siyu.notey.ui.theme.Sunny
 
 private fun Priority.label() = when (this) {
     Priority.HIGH -> "Alta"
@@ -25,9 +25,9 @@ private fun Priority.label() = when (this) {
 }
 
 private fun Priority.color() = when (this) {
-    Priority.HIGH -> TomatoJam
-    Priority.MEDIUM -> SoftPeach
-    Priority.LOW -> SkyBlue
+    Priority.HIGH -> Coral
+    Priority.MEDIUM -> Sunny
+    Priority.LOW -> Sky
 }
 
 // Solo lectura: se usa dentro de las tarjetas
@@ -36,7 +36,7 @@ fun PriorityChip(priority: Priority) {
     Surface(shape = RoundedCornerShape(50), color = priority.color()) {
         Text(
             text = priority.label(),
-            color = if (priority == Priority.HIGH) Color.White else InkDark,
+            color = InkDark,
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
         )

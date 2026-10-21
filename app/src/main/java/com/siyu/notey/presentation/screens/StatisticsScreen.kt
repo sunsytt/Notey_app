@@ -38,10 +38,13 @@ fun StatisticsScreen(state: TaskUiState) {
             StatCard("${state.completionPercent}%", "Finalización", Modifier.weight(1f))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StatCard("${state.pendingCount}", "Pendientes", Modifier.weight(1f))
-            StatCard("${state.inProgressCount}", "En progreso", Modifier.weight(1f))
+            StatCard("${state.pendingCount}", "Pendientes", Modifier.weight(1f),
+                MaterialTheme.colorScheme.tertiary)
+            StatCard("${state.inProgressCount}", "En progreso", Modifier.weight(1f),
+                MaterialTheme.colorScheme.secondary)
             StatCard("${state.completedCount}", "Completadas", Modifier.weight(1f))
         }
+
 
         // Tiempo total
         Card(Modifier.fillMaxWidth()) {

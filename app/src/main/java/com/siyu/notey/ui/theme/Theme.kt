@@ -8,15 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// Theme.kt
 private val Colors = lightColorScheme(
-    primary = CoralGlow, onPrimary = InkDark,
-    secondary = SkyBlue, onSecondary = InkDark,
-    tertiary = SoftPeach, onTertiary = InkDark,
-    error = TomatoJam, onError = Color.White,
-    background = Honeydew, onBackground = InkDark,
-    surface = WarmWhite, onSurface = InkDark,
-    secondaryContainer = SoftPeach, onSecondaryContainer = InkDark
+    primary = Violet, onPrimary = Color.White,
+    secondary = Pink, onSecondary = InkDark,
+    tertiary = Sunny, onTertiary = InkDark,
+    error = Coral, onError = Color.White,
+    background = AppBackground, onBackground = InkDark,
+    surface = CardWhite, onSurface = InkDark,
+    secondaryContainer = VioletSoft, onSecondaryContainer = InkDark,
+    outlineVariant = BorderSoft
 )
 
 private val AppShapes = Shapes(
@@ -27,4 +27,9 @@ private val AppShapes = Shapes(
 
 @Composable
 fun NoteyTheme(content: @Composable () -> Unit) =
-    MaterialTheme(colorScheme = Colors, shapes = AppShapes, content = content)
+    MaterialTheme(
+        colorScheme = Colors,
+        typography = AppTypography,
+        shapes = AppShapes,
+        content = content
+    )
