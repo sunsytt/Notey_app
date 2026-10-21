@@ -17,6 +17,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.siyu.notey.data.local.SeedData
+import com.siyu.notey.presentation.screens.ArchiveScreen
+import com.siyu.notey.presentation.screens.HistoryScreen
 import com.siyu.notey.presentation.screens.TaskDetailScreen
 import com.siyu.notey.presentation.screens.TaskFormScreen
 import com.siyu.notey.presentation.screens.TaskListScreen
@@ -78,7 +80,12 @@ fun AppNav(vm: TaskViewModel) {
                 )
             }
             composable(Screen.Stats.route) { /* StatisticsScreen(state) */ }
-            composable(Screen.History.route) { /* HistoryScreen(state) */ }
+            composable(Screen.History.route) {
+                HistoryScreen(
+                    tasks = state.tasks,
+                    records = state.activityRecords
+                )
+            }
             composable(
                 route = "form?taskId={taskId}",
                 arguments = listOf(navArgument("taskId") {
@@ -99,6 +106,15 @@ fun AppNav(vm: TaskViewModel) {
                     onCancel = { nav.popBackStack() }
                 )
 
+            }
+            composable(Screen.Archived.route) {
+                ArchiveScreen(
+                    archivedTasks = state.archivedTasks,
+                    minutesOf = state::minutesOf,
+                    onBack = { nav.popBackStack() },
+                    onTaskClick = { nav.navigate("detail/$it") },
+                    onRestore = vm::restoreTask
+                )
             }
         }
     }
