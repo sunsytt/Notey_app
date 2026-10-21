@@ -19,6 +19,8 @@ import androidx.navigation.navArgument
 import com.siyu.notey.data.local.SeedData
 import com.siyu.notey.presentation.screens.ArchiveScreen
 import com.siyu.notey.presentation.screens.HistoryScreen
+import com.siyu.notey.presentation.screens.HomeScreen
+import com.siyu.notey.presentation.screens.StatisticsScreen
 import com.siyu.notey.presentation.screens.TaskDetailScreen
 import com.siyu.notey.presentation.screens.TaskFormScreen
 import com.siyu.notey.presentation.screens.TaskListScreen
@@ -49,7 +51,13 @@ fun AppNav(vm: TaskViewModel) {
     ) { padding ->
         NavHost(nav, Screen.Home.route,
             Modifier.padding(padding)) {
-            composable(Screen.Home.route) { /* DashboardScreen(state, ...) */ }
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    state = state,
+                    onTaskClick = { nav.navigate("detail/$it") },
+                    onNewTask = { nav.navigate("form") }
+                )
+            }
             composable(Screen.Tasks.route) {
                 TaskListScreen(
                     state = state,
@@ -79,7 +87,9 @@ fun AppNav(vm: TaskViewModel) {
                     onRegisterSession = vm::registerSession
                 )
             }
-            composable(Screen.Stats.route) { /* StatisticsScreen(state) */ }
+            composable(Screen.Stats.route) {
+                StatisticsScreen(state = state)
+            }
             composable(Screen.History.route) {
                 HistoryScreen(
                     tasks = state.tasks,
