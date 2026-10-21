@@ -1,18 +1,18 @@
 package com.siyu.notey.data.local
 
-import com.google.android.libraries.places.api.model.LocalDate
 import com.siyu.notey.data.model.ActivityRecord
 import com.siyu.notey.data.model.Category
 import com.siyu.notey.data.model.Priority
 import com.siyu.notey.data.model.Task
 import com.siyu.notey.data.model.TaskStatus
+import java.time.LocalDate
 
 object SeedData {
     val categories = listOf(
-        Category("Académico"),
-        Category("Personal"),
-        Category("Proyecto"),
-        Category("Hábito")
+        Category.STUDY,
+        Category.PERSONAL,
+        Category.PROJECTS,
+        Category.WORK
     )
 
     private fun day(offset: Long) = LocalDate.now().plusDays(offset).toString()
@@ -39,7 +39,7 @@ object SeedData {
                 ActivityRecord("act_2", 1, day(0), 25, "Revisé condiciones y contadores."),
                 ActivityRecord("act_3", 3, day(0), 40, "Ajusté tarjetas y navegación."),
                 ActivityRecord("act_4", 4, day(-1), 30, "Lectura terminada."),
-                ActivityRecord("act_5", 6, day(-3), 45, null)
+                ActivityRecord("act_5", 6, day(-3), 45, "")
             )
         )
     }

@@ -7,10 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import kotlin.getValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.siyu.notey.data.local.TaskDataStore
 import com.siyu.notey.data.model.Category
 import com.siyu.notey.data.model.Priority
@@ -43,45 +41,5 @@ class MainActivity : ComponentActivity() {
                 AppNav(vm = taskViewModel)
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun NoteyPreview() {
-    val sampleTasks = listOf(
-        Task(
-            id = 1,
-            title = "Estudiar Kotlin",
-            description = "Practicar map y filter",
-            category = Category.STUDY,
-            priority = Priority.HIGH,
-            status = TaskStatus.IN_PROGRESS,
-            createdAt = 0L,
-            estimatedMinutes = 60
-        ),
-        Task(
-            id = 2,
-            title = "Avanzar en Notey",
-            description = "Diseñar la pantalla principal",
-            category = Category.PROJECTS,
-            priority = Priority.MEDIUM,
-            status = TaskStatus.PENDING,
-            createdAt = 0L,
-            estimatedMinutes = 90
-        )
-    )
-
-    MaterialTheme {
-        TaskScreen(
-            uiState = TaskUiState(
-                tasks = sampleTasks,
-                isLoading = false
-            ),
-            onCreateTask = { _, _, _, _, _ -> },
-            onChangeStatus = { _, _ -> },
-            onArchiveTask = {},
-            onRegisterSession = {}
-        )
     }
 }

@@ -3,6 +3,10 @@ package com.siyu.notey.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.siyu.notey.data.model.ActivityRecord
+import com.siyu.notey.data.model.Category
+import com.siyu.notey.data.model.Priority
+import com.siyu.notey.data.model.Task
+import com.siyu.notey.data.model.TaskStatus
 import com.siyu.notey.data.repository.TaskRepository
 import com.siyu.notey.presentation.state.TaskUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,13 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.siyu.notey.data.model.Category
-import com.siyu.notey.data.model.Priority
-import com.siyu.notey.data.model.Task
-import com.siyu.notey.data.model.TaskStatus
-import java.time.LocalDate
 import java.util.UUID
-
 
 class TaskViewModel (
     private val repository: TaskRepository
@@ -100,6 +98,7 @@ class TaskViewModel (
             }
         }
     }
+
     fun updateTaskStatus(taskId: Int, newStatus: TaskStatus) {
         val task = _uiState.value.tasks
             .find { it.id == taskId }
@@ -123,6 +122,7 @@ class TaskViewModel (
             }
         }
     }
+
     fun archiveTask(taskId: Int) {
         viewModelScope.launch {
             try {
@@ -146,6 +146,7 @@ class TaskViewModel (
             }
         }
     }
+
     fun registerSession(taskId: Int, date: String, minutes: Int, note: String?) {
         viewModelScope.launch {
             try {
@@ -155,7 +156,7 @@ class TaskViewModel (
                         taskId = taskId,
                         date = date,
                         durationMinutes = minutes,
-                        note = note?.trim()?.ifBlank { null }
+                        notes = note?.trim()?.ifBlank { "" } ?: ""
                     )
                 )
                 _uiState.update { it.copy(errorMessage = null) }
@@ -166,9 +167,11 @@ class TaskViewModel (
             }
         }
     }
+
     fun selectStatus(status: TaskStatus?) {
         _uiState.update { it.copy(selectedStatus = status) }
     }
+
     fun selectCategory(category: Category?) {
         _uiState.update { it.copy(selectedCategory = category) }
     }

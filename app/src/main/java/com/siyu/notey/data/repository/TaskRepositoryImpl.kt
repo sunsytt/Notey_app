@@ -21,14 +21,14 @@ class TaskRepositoryImpl(
             raw?.let(TaskSerializer::decode) ?: TaskData()
         }
 
-    // Solo escribe si no hay nada guardado; nunca pisa datos del usuario
+    // Solo escribe si no hay nada guardado
     override suspend fun seedIfEmpty() {
         dataStore.updateTaskData { raw ->
             raw ?: TaskSerializer.encode(SeedData.data())
         }
     }
 
-    // Lee, transforma y guarda en una sola operación atómica
+    // Lee, transforma y guarda en una sola operación
     private suspend fun modify(transform: (TaskData) -> TaskData) {
         dataStore.updateTaskData { raw ->
             val current = raw?.let(TaskSerializer::decode) ?: TaskData()
@@ -50,7 +50,7 @@ class TaskRepositoryImpl(
         })
     }
 
-    // Conserva el estado anterior (RN-09)
+    // Conserva el estado anterior
     override suspend fun restoreTask(taskId: Int) = modify { data ->
         data.copy(tasks = data.tasks.map {
             if (it.id == taskId) it.copy(isArchived = false) else it
@@ -62,7 +62,7 @@ class TaskRepositoryImpl(
         require(data.tasks.any { it.id == record.taskId }) { "La tarea no existe." }
 
         data.copy(
-            // RN-16: Pendiente pasa a En progreso; los demás estados no cambian
+            //Pendiente pasa a En progreso; los demás estados no cambian
             tasks = data.tasks.map {
                 if (it.id == record.taskId && it.status == TaskStatus.PENDING)
                     it.copy(status = TaskStatus.IN_PROGRESS)

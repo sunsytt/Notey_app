@@ -1,9 +1,12 @@
 package com.siyu.notey.presentation.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.graphics.vector.ImageVector
 
-
-//sealed class Screen + bottomItems, define destinos
 sealed class Screen(val route: String, val label: String = "", val icon: ImageVector? = null) {
     data object Home : Screen("home", "Inicio", Icons.Default.Home)
     data object Tasks : Screen("tasks", "Tareas", Icons.AutoMirrored.Filled.List)

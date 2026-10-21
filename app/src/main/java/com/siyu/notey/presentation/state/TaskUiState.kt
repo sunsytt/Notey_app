@@ -1,10 +1,9 @@
 package com.siyu.notey.presentation.state
 
-import com.google.ai.edge.litert.support.label.Category
 import com.siyu.notey.data.model.ActivityRecord
+import com.siyu.notey.data.model.Category
 import com.siyu.notey.data.model.Task
 import com.siyu.notey.data.model.TaskStatus
-
 
 data class TaskUiState(
     val tasks: List<Task> = emptyList(),
@@ -30,4 +29,3 @@ data class TaskUiState(
     fun minutesOf(taskId: Int) =
         activityRecords.filter { it.taskId == taskId }.sumOf { it.durationMinutes }
 }
-
